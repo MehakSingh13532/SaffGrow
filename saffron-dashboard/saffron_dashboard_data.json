@@ -1,0 +1,151 @@
+{
+  "chamber_stats": {
+    "chamber_id": "SAFFRON_001",
+    "status": "Active",
+    "uptime": "127 hours",
+    "current_cycle": "Flowering Phase",
+    "next_harvest": "14 days"
+  },
+  "environmental_data": {
+    "temperature": {
+      "current": 22.5,
+      "target": 20.0,
+      "min": 18.0,
+      "max": 25.0,
+      "unit": "\u00b0C",
+      "status": "Optimal"
+    },
+    "humidity": {
+      "current": 65,
+      "target": 60,
+      "min": 50,
+      "max": 70,
+      "unit": "%",
+      "status": "Good"
+    },
+    "soil_moisture": {
+      "current": 45,
+      "target": 50,
+      "min": 40,
+      "max": 60,
+      "unit": "%",
+      "status": "Needs Watering"
+    },
+    "light_intensity": {
+      "current": 350,
+      "target": 400,
+      "min": 300,
+      "max": 500,
+      "unit": "\u00b5mol/m\u00b2/s",
+      "status": "Good"
+    },
+    "co2_level": {
+      "current": 420,
+      "target": 400,
+      "min": 380,
+      "max": 450,
+      "unit": "ppm",
+      "status": "Optimal"
+    }
+  },
+  "automation_controls": {
+    "led_lights": {
+      "status": "ON",
+      "intensity": 85,
+      "schedule": "12h ON / 12h OFF",
+      "power_consumption": "65W"
+    },
+    "irrigation_system": {
+      "status": "Scheduled",
+      "last_watered": "2 hours ago",
+      "next_watering": "in 4 hours",
+      "water_level": "78%"
+    },
+    "ventilation": {
+      "fan_speed": 45,
+      "status": "AUTO",
+      "air_circulation": "Good"
+    },
+    "climate_control": {
+      "heater": "OFF",
+      "cooler": "AUTO",
+      "humidifier": "ON"
+    }
+  },
+  "plant_growth_data": {
+    "corms_planted": 15,
+    "sprouted": 14,
+    "flowering": 8,
+    "harvested_flowers": 23,
+    "estimated_yield": "180-240g",
+    "growth_stage": "Peak Flowering",
+    "days_since_planting": 45
+  },
+  "yield_analytics": {
+    "current_cycle": {
+      "flowers_harvested": 23,
+      "stigmas_collected": 69,
+      "estimated_saffron_weight": "0.35g",
+      "quality_grade": "Premium"
+    },
+    "historical_performance": {
+      "total_cycles_completed": 3,
+      "average_yield_per_cycle": "0.42g",
+      "best_cycle_yield": "0.58g",
+      "total_saffron_produced": "1.26g",
+      "revenue_generated": "\u20b92,520"
+    }
+  },
+  "alerts_notifications": [
+    {
+      "type": "warning",
+      "message": "Soil moisture below optimal range",
+      "timestamp": "2025-09-25 13:45:00",
+      "action_required": "Schedule irrigation"
+    },
+    {
+      "type": "info",
+      "message": "8 new flowers ready for harvest",
+      "timestamp": "2025-09-25 09:30:00",
+      "action_required": "Manual harvest recommended"
+    },
+    {
+      "type": "success",
+      "message": "Temperature stabilized in optimal range",
+      "timestamp": "2025-09-25 08:15:00",
+      "action_required": "None"
+    }
+  ],
+  "cost_analysis": {
+    "setup_costs": {
+      "chamber_materials": 4500,
+      "led_lighting": 2200,
+      "sensors_electronics": 1200,
+      "automation_systems": 1000,
+      "growing_medium": 800,
+      "total_setup": 9700
+    },
+    "operational_costs": {
+      "electricity_monthly": 450,
+      "water_nutrients": 150,
+      "maintenance": 200,
+      "consumables": 100,
+      "total_monthly": 900
+    },
+    "revenue_projection": {
+      "saffron_price_per_gram": 2000,
+      "estimated_annual_yield": "5.0g",
+      "projected_annual_revenue": 10000,
+      "net_profit_annually": 8200,
+      "roi_percentage": 84.5
+    }
+  },
+  "system_logs": [
+    "2025-09-25 14:00:00 - LED lights switched to flowering spectrum",
+    "2025-09-25 13:45:00 - Soil moisture sensor triggered irrigation alert",
+    "2025-09-25 12:30:00 - Temperature controller adjusted to 22\u00b0C",
+    "2025-09-25 11:15:00 - Humidity increased to 65% via misting system",
+    "2025-09-25 10:00:00 - 8 flowers detected ready for harvest",
+    "2025-09-25 09:30:00 - Daily growth cycle assessment completed"
+  ]
+}

@@ -4,6 +4,7 @@ import App from './App.jsx'
 import './index.css'
 import { BrowserRouter } from 'react-router-dom'
 import { ClerkProvider } from '@clerk/clerk-react'
+import 'bootstrap/dist/css/bootstrap.min.css'
 
 // Replace with your actual key from .env.local
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
