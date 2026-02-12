@@ -5,26 +5,26 @@ export default function PaymentPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [email, setEmail] = useState('');
-  
+
   // State to control the view
   const [loading, setLoading] = useState(true); // Default: TRUE (Hide everything while checking)
 
   // ✅ YOUR RAZORPAY TEST KEY ID
-  const KEY_ID = 'rzp_test_S5P0ZwzNXUT7yn'; 
+  const KEY_ID = 'rzp_test_S5P0ZwzNXUT7yn';
 
   // ✅ ADMIN WHITELIST
   const adminEmails = [
-    "mehak0512@gmail.com", 
+    "mehak0512@gmail.com",
     "vanshaj0512@gmail.com"
   ];
 
   useEffect(() => {
     const userEmail = searchParams.get('email') || localStorage.getItem('currentUserEmail');
-    
+
     // 1. Safety Check: If no email, go to Sign In
-    if (!userEmail) { 
-      navigate('/signin'); 
-      return; 
+    if (!userEmail) {
+      navigate('/signin');
+      return;
     }
 
     const normalizedEmail = userEmail.toLowerCase();
@@ -33,7 +33,7 @@ export default function PaymentPage() {
     // 2. ADMIN BYPASS (Immediate Redirect)
     if (adminEmails.includes(normalizedEmail)) {
       grantAccess(normalizedEmail);
-      return; 
+      return;
     }
 
     // 3. CHECK PAYMENT STATUS (The Fix)
@@ -48,7 +48,7 @@ export default function PaymentPage() {
           grantAccess(normalizedEmail);
         } else {
           // ❌ NOT PAID: Show the Payment Button
-          setLoading(false); 
+          setLoading(false);
           loadRazorpayScript();
         }
       } catch (error) {
@@ -81,18 +81,18 @@ export default function PaymentPage() {
   // --- RAZORPAY PAYMENT HANDLER ---
   const handlePayment = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/create-order', { method: 'POST' });
+      const res = await fetch('/api/create-order', { method: 'POST' });
       const order = await res.json();
 
       const options = {
-        key: KEY_ID, 
-        amount: order.amount, 
+        key: KEY_ID,
+        amount: order.amount,
         currency: "INR",
         name: "SaffGrow Technologies",
         description: "Dashboard Activation",
-        order_id: order.id, 
+        order_id: order.id,
         handler: async function (response) {
-          const verifyRes = await fetch('http://localhost:5000/api/verify-payment', {
+          const verifyRes = await fetch('/api/verify-payment', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -105,8 +105,8 @@ export default function PaymentPage() {
 
           const verifyData = await verifyRes.json();
           if (verifyData.success) {
-             alert("Payment Successful! Welcome.");
-             grantAccess(email);
+            alert("Payment Successful! Welcome.");
+            grantAccess(email);
           } else {
             alert("Verification Failed.");
           }
@@ -129,7 +129,7 @@ export default function PaymentPage() {
   if (loading) {
     return (
       <div style={{ height: '100vh', background: '#020617', color: 'white', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-        <div style={{width: '40px', height: '40px', border: '4px solid #333', borderTop: '4px solid #facc15', borderRadius: '50%', animation: 'spin 1s linear infinite'}}></div>
+        <div style={{ width: '40px', height: '40px', border: '4px solid #333', borderTop: '4px solid #facc15', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
         <p style={{ marginTop: '20px', color: '#94a3b8' }}>Verifying Account Status...</p>
         <style>{`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`}</style>
       </div>
@@ -144,7 +144,7 @@ export default function PaymentPage() {
         <p style={{ color: '#94a3b8', marginBottom: '30px' }}>One-time activation fee</p>
         <div style={{ fontSize: '42px', fontWeight: 'bold', marginBottom: '10px', color: 'white' }}>₹ 1.00</div>
         <div style={{ fontSize: '12px', color: '#64748b', marginBottom: '30px' }}>Secured by Razorpay</div>
-        <button 
+        <button
           onClick={handlePayment}
           style={{ width: '100%', padding: '16px', background: '#facc15', color: 'black', border: 'none', borderRadius: '12px', fontSize: '18px', fontWeight: 'bold', cursor: 'pointer' }}
         >

@@ -3,7 +3,7 @@
  * Integrated Frontend Logic
  */
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // 1. Initialize Profile Dropdown
     initProfile();
 
@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', function() {
  */
 async function syncDashboard() {
     try {
-        const response = await fetch('http://localhost:5000/api/chamber-data');
+        const response = await fetch('/api/chamber-data');
         if (!response.ok) throw new Error('Backend Offline');
         const data = await response.json();
 
@@ -80,7 +80,7 @@ function updateMetricDisplay(titleText, meta) {
         if (title && title.textContent.includes(titleText)) {
             // Update value and unit
             card.querySelector('.env-value').textContent = `${meta.current}${meta.unit}`;
-            
+
             // Update status badge
             const badge = card.querySelector('.status-badge');
             if (badge) {
@@ -118,7 +118,7 @@ function initProfile() {
         const userEmail = localStorage.getItem('currentUserEmail') || '';
         const userName = localStorage.getItem('currentUserName') || 'User';
         const userInitial = document.getElementById('userInitial');
-        
+
         if (userInitial) {
             userInitial.textContent = (userName !== 'User' ? userName : userEmail).charAt(0).toUpperCase() || 'U';
         }
