@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Approval - SaffGrow</title>
+    <style>
+        body { background: #f4f4f5; font-family: sans-serif; padding: 40px; }
+        .container { max-width: 600px; margin: 0 auto; }
+        .card { background: white; padding: 20px; border-radius: 10px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        .btn { background: #22c55e; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        .btn:hover { background: #16a34a; }
+        h2 { color: #18181b; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Payment Approvals</h2>
+        <div id="pending-list">Loading pending requests...</div>
+    </div>
+
+    <script>
+        const API_URL = "http://localhost:5000/api";
+
+        async function fetchPending() {
+            try {
+                const res = await fetch(`${API_URL}/admin/pending`);
+                const data = await res.json();
+                const list = document.getElementById('pending-list');
+
+                if (data.length === 0) {
+                    list.innerHTML = "<p style='color:#71717a'>No pending payments right now.</p>";
+                    return;
+                }
+
+                list.innerHTML = data.map(user => `
+                    <div class="card">
+                        <div>
+                            <div style="font-weight:bold">${user.email}</div>
+                            <div style="font-size:12px; color:#71717a">UTR: ${user.utr}</div>
+                        </div>
+                        <button class="btn" onclick="approveUser('${user.email}')">Approve</button>
+                    </div>
+                `).join('');
+            } catch (e) {
+                document.getElementById('pending-list').innerHTML = "<p style='color:red'>Backend is offline. Run 'node server.js' in public folder.</p>";
+            }
+        }
+
+        async function approveUser(email) {
+            await fetch(`${API_URL}/admin/approve`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email })
+            });
+            fetchPending(); // Refresh list immediately
+        }
+
+        // Auto-refresh every 3 seconds
+        setInterval(fetchPending, 3000);
+        fetchPending();
+    </script>
+</body>
+</html>

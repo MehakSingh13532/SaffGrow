@@ -1,0 +1,30 @@
+# Large Dataset and Model Files
+ML/Saffron_Kashmir_Natural_High_Res_Dataset.csv
+ML/*.pkl
+ML/*.h5
+ML/*.joblib
+ML/*.model
+
+# Temporary files
+tempCodeRunnerFile.py
+*.pyc
+__pycache__/
+*.pyo
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Python
+*.egg-info/
+dist/
+build/
+.env
+venv/
+env/

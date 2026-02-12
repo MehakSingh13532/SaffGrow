@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SaffGrow - Smart Saffron Farming Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+<script>
+    (async function() {
+        const email = localStorage.getItem('currentUserEmail');
+        
+        // 1. If not logged in, go to React login
+        if (!email) {
+            window.location.href = '/signin';
+            return;
+        }
+
+        try {
+            // 2. Double Check with Backend (Port 5000)
+            const res = await fetch(`http://localhost:5000/api/check-status?email=${email}`);
+            const data = await res.json();
+
+            // 3. If not Paid, kick them back to Payment Page
+            if (data.status !== 'paid') {
+                alert("Security Check: Payment not found. Please login again.");
+                window.location.href = `/payment?email=${email}`;
+            }
+        } catch (e) {
+            console.warn("Backend offline, unable to verify server-side. Proceeding with caution.");
+        }
+    })();
+</script>
+    <style>
+        /* Essential styles for the profile icon and dropdown */
+        .header-info { display: flex; align-items: center; gap: 15px; }
+        .user-profile-wrapper { position: relative; cursor: pointer; display: flex; align-items: center; }
+        .profile-letter-icon {
+            width: 38px; height: 38px; background-color: #8e44ad; color: white;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-weight: bold; border: 2px solid #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .profile-dropdown-menu {
+            display: none; position: absolute; top: 45px; right: 0;
+            background: white; min-width: 130px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            border-radius: 5px; padding: 10px; z-index: 1000;
+        }
+        .profile-dropdown-menu.active { display: block; }
+        .logout-link-btn {
+            width: 100%; padding: 8px; background: #e74c3c; color: white;
+            border: none; border-radius: 4px; cursor: pointer; font-size: 14px;
+            display: flex; align-items: center; justify-content: center; gap: 5px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <h3><i class="fas fa-seedling"></i> SaffGrow</h3>
+        </div>
+        <ul class="sidebar-nav">
+            <li><a href="#overview" class="nav-link active"><i class="fas fa-tachometer-alt"></i> Overview</a></li>
+            <li><a href="#environment" class="nav-link"><i class="fas fa-thermometer-half"></i> Environment</a></li>
+            <li><a href="#automation" class="nav-link"><i class="fas fa-cogs"></i> Automation</a></li>
+            <li><a href="#growth" class="nav-link"><i class="fas fa-leaf"></i> Growth</a></li>
+            <li><a href="#analytics" class="nav-link"><i class="fas fa-chart-line"></i> Analytics</a></li>
+            <li><a href="#costs" class="nav-link"><i class="fas fa-dollar-sign"></i> Costs</a></li>
+            <li><a href="#logs" class="nav-link"><i class="fas fa-list-alt"></i> Logs</a></li>
+        </ul>
+    </nav>
+
+    <main class="main-content">
+        <header class="dashboard-header">
+            <div class="header-main">
+                <h1>SaffGrow - Smart Saffron Farming Dashboard</h1>
+                <div class="header-info">
+                    <span class="chamber-id">Chamber: SAFFRON_001</span>
+                    
+                    <div class="user-profile-wrapper" id="profileToggle">
+                        <div class="profile-letter-icon" id="userInitial">S</div>
+                        <div class="profile-dropdown-menu" id="dropdownMenu">
+                            <button onclick="handleLogout()" class="logout-link-btn">
+                                <i class="fas fa-sign-out-alt"></i> Logout
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="header-stats">
+                <div class="stat-item">
+                    <i class="fas fa-clock"></i>
+                    <span>Current Time: <span id="current-time"></span></span>
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-server"></i>
+                    <span>Uptime: 127 hours</span>
+                </div>
+            </div>
+        </header>
+
+        <section id="overview" class="section">
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-icon">
+                        <i class="fas fa-seedling"></i>
+                    </div>
+                    <div class="metric-content">
+                        <h3>Growth Stage</h3>
+                        <div class="metric-value">Peak Flowering</div>
+                        <div class="metric-status success">Active</div>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon">
+                        <i class="fas fa-calendar-day"></i>
+                    </div>
+                    <div class="metric-content">
+                        <h3>Days Since Planting</h3>
+                        <div class="metric-value">45</div>
+                        <div class="metric-status info">Days</div>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="metric-content">
+                        <h3>Next Harvest</h3>
+                        <div class="metric-value">14</div>
+                        <div class="metric-status warning">Days</div>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon">
+                        <i class="fas fa-flower"></i>
+                    </div>
+                    <div class="metric-content">
+                        <h3>Flowers Harvested</h3>
+                        <div class="metric-value">23</div>
+                        <div class="metric-status success">This Cycle</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="environment" class="section">
+            <h2><i class="fas fa-thermometer-half"></i> Environmental Monitoring</h2>
+            <div class="environment-grid">
+                <div class="env-card">
+                    <div class="env-header">
+                        <i class="fas fa-thermometer-half"></i>
+                        <h3>Temperature</h3>
+                        <span class="status-badge optimal">Optimal</span>
+                    </div>
+                    <div class="env-value">22.5°C</div>
+                    <div class="env-target">Target: 20.0°C</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill temperature" style="width: 75%"></div>
+                    </div>
+                    <div class="env-range">18°C - 25°C</div>
+                </div>
+
+                <div class="env-card">
+                    <div class="env-header">
+                        <i class="fas fa-tint"></i>
+                        <h3>Humidity</h3>
+                        <span class="status-badge good">Good</span>
+                    </div>
+                    <div class="env-value">65%</div>
+                    <div class="env-target">Target: 60%</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill humidity" style="width: 65%"></div>
+                    </div>
+                    <div class="env-range">50% - 70%</div>
+                </div>
+
+                <div class="env-card">
+                    <div class="env-header">
+                        <i class="fas fa-droplet"></i>
+                        <h3>Soil Moisture</h3>
+                        <span class="status-badge needs-attention">Needs Watering</span>
+                    </div>
+                    <div class="env-value">45%</div>
+                    <div class="env-target">Target: 50%</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill soil-moisture" style="width: 45%"></div>
+                    </div>
+                    <div class="env-range">40% - 60%</div>
+                </div>
+
+                <div class="env-card">
+                    <div class="env-header">
+                        <i class="fas fa-lightbulb"></i>
+                        <h3>Light Intensity</h3>
+                        <span class="status-badge good">Good</span>
+                    </div>
+                    <div class="env-value">350 µmol/m²/s</div>
+                    <div class="env-target">Target: 400 µmol/m²/s</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill light" style="width: 70%"></div>
+                    </div>
+                    <div class="env-range">300 - 500 µmol/m²/s</div>
+                </div>
+
+                <div class="env-card">
+                    <div class="env-header">
+                        <i class="fas fa-wind"></i>
+                        <h3>CO2 Level</h3>
+                        <span class="status-badge optimal">Optimal</span>
+                    </div>
+                    <div class="env-value">420 ppm</div>
+                    <div class="env-target">Target: 400 ppm</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill co2" style="width: 80%"></div>
+                    </div>
+                    <div class="env-range">380 - 450 ppm</div>
+                </div>
+            </div>
+        </section>
+
+        <section id="automation" class="section">
+            <h2><i class="fas fa-cogs"></i> Automation Controls</h2>
+            <div class="automation-grid">
+                <div class="control-card">
+                    <div class="control-header">
+                        <i class="fas fa-lightbulb"></i>
+                        <h3>LED Lighting</h3>
+                        <div class="status-indicator on">ON</div>
+                    </div>
+                    <div class="control-content">
+                        <div class="control-item">
+                            <label>Intensity: <span id="light-intensity-value">85%</span></label>
+                            <input type="range" id="light-intensity" min="0" max="100" value="85" class="slider">
+                        </div>
+                        <div class="control-stats">
+                            <span>Schedule: 12h ON / 12h OFF</span>
+                            <span>Power: 65W</span>
+                        </div>
+                        <button class="btn btn--secondary control-btn" onclick="toggleLighting()">Toggle</button>
+                    </div>
+                </div>
+
+                <div class="control-card">
+                    <div class="control-header">
+                        <i class="fas fa-tint"></i>
+                        <h3>Irrigation System</h3>
+                        <div class="status-indicator scheduled">Scheduled</div>
+                    </div>
+                    <div class="control-content">
+                        <div class="control-stats">
+                            <span>Last watered: 2 hours ago</span>
+                            <span>Next watering: in 4 hours</span>
+                            <span>Water level: 78%</span>
+                        </div>
+                        <button class="btn btn--primary control-btn" onclick="triggerWatering()">Water Now</button>
+                    </div>
+                </div>
+
+                <div class="control-card">
+                    <div class="control-header">
+                        <i class="fas fa-fan"></i>
+                        <h3>Ventilation</h3>
+                        <div class="status-indicator auto">AUTO</div>
+                    </div>
+                    <div class="control-content">
+                        <div class="control-item">
+                            <label>Fan Speed: <span id="fan-speed-value">45%</span></label>
+                            <input type="range" id="fan-speed" min="0" max="100" value="45" class="slider">
+                        </div>
+                        <div class="control-stats">
+                            <span>Air Circulation: Good</span>
+                        </div>
+                        <button class="btn btn--secondary control-btn" onclick="toggleVentilation()">Toggle Mode</button>
+                    </div>
+                </div>
+
+                <div class="control-card">
+                    <div class="control-header">
+                        <i class="fas fa-temperature-high"></i>
+                        <h3>Climate Control</h3>
+                        <div class="status-indicator auto">AUTO</div>
+                    </div>
+                    <div class="control-content">
+                        <div class="control-stats">
+                            <span>Heater: OFF</span>
+                            <span>Cooler: AUTO</span>
+                            <span>Humidifier: ON</span>
+                        </div>
+                        <button class="btn btn--secondary control-btn" onclick="adjustClimate()">Adjust</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="growth" class="section">
+            <h2><i class="fas fa-leaf"></i> Plant Growth Tracking</h2>
+            <div class="growth-overview">
+                <div class="growth-stats">
+                    <div class="growth-stat-item">
+                        <div class="stat-number">15</div>
+                        <div class="stat-label">Corms Planted</div>
+                    </div>
+                    <div class="growth-stat-item">
+                        <div class="stat-number">14</div>
+                        <div class="stat-label">Sprouted</div>
+                    </div>
+                    <div class="growth-stat-item">
+                        <div class="stat-number">8</div>
+                        <div class="stat-label">Flowering</div>
+                    </div>
+                    <div class="growth-stat-item">
+                        <div class="stat-number">23</div>
+                        <div class="stat-label">Flowers Harvested</div>
+                    </div>
+                </div>
+                <div class="growth-progress">
+                    <h3>Growth Progress</h3>
+                    <div class="progress-bar large">
+                        <div class="progress-fill growth" style="width: 75%"></div>
+                    </div>
+                    <div class="progress-labels">
+                        <span>Planted</span>
+                        <span>Sprouted</span>
+                        <span>Flowering</span>
+                        <span>Harvest</span>
+                    </div>
+                </div>
+                <div class="yield-info">
+                    <h3>Yield Projection</h3>
+                    <div class="yield-estimate">180-240g</div>
+                    <div class="quality-grade premium">Premium Grade</div>
+                </div>
+            </div>
+        </section>
+
+        <div class="alerts-section">
+            <h3><i class="fas fa-bell"></i> Alerts & Notifications</h3>
+            <div class="alerts-container" id="alerts-container">
+                </div>
+        </div>
+
+        <section id="analytics" class="section">
+            <h2><i class="fas fa-chart-line"></i> Analytics & Performance</h2>
+            <div class="analytics-grid">
+                <div class="analytics-card">
+                    <h3>Current Cycle Statistics</h3>
+                    <div class="analytics-stats">
+                        <div class="stat-row">
+                            <span>Flowers Harvested:</span>
+                            <span>23</span>
+                        </div>
+                        <div class="stat-row">
+                            <span>Stigmas Collected:</span>
+                            <span>69</span>
+                        </div>
+                        <div class="stat-row">
+                            <span>Estimated Weight:</span>
+                            <span>0.35g</span>
+                        </div>
+                        <div class="stat-row">
+                            <span>Quality Grade:</span>
+                            <span class="grade premium">Premium</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="analytics-card">
+                    <h3>Historical Performance</h3>
+                    <div class="chart-container" style="position: relative; height: 200px;">
+                        <canvas id="performance-chart"></canvas>
+                    </div>
+                </div>
+                <div class="analytics-card">
+                    <h3>Revenue Tracking</h3>
+                    <div class="revenue-stats">
+                        <div class="revenue-item">
+                            <span>Total Revenue:</span>
+                            <span class="revenue-amount">₹2,520</span>
+                        </div>
+                        <div class="revenue-item">
+                            <span>Average per Cycle:</span>
+                            <span>₹840</span>
+                        </div>
+                        <div class="revenue-item">
+                            <span>Best Cycle:</span>
+                            <span>₹1,160</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="costs" class="section">
+            <h2><i class="fas fa-dollar-sign"></i> Cost Analysis</h2>
+            <div class="costs-grid">
+                <div class="cost-card">
+                    <h3>Setup Costs Breakdown</h3>
+                    <div class="chart-container" style="position: relative; height: 250px;">
+                        <canvas id="setup-costs-chart"></canvas>
+                    </div>
+                    <div class="total-cost">Total Setup: ₹9,700</div>
+                </div>
+                <div class="cost-card">
+                    <h3>Monthly Operational Costs</h3>
+                    <div class="cost-breakdown">
+                        <div class="cost-item">
+                            <span>Electricity:</span>
+                            <span>₹450</span>
+                        </div>
+                        <div class="cost-item">
+                            <span>Water & Nutrients:</span>
+                            <span>₹150</span>
+                        </div>
+                        <div class="cost-item">
+                            <span>Maintenance:</span>
+                            <span>₹200</span>
+                        </div>
+                        <div class="cost-item">
+                            <span>Consumables:</span>
+                            <span>₹100</span>
+                        </div>
+                        <div class="cost-total">
+                            <span>Total Monthly:</span>
+                            <span>₹900</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="cost-card">
+                    <h3>ROI Projection</h3>
+                    <div class="roi-stats">
+                        <div class="roi-item">
+                            <span>Annual Yield:</span>
+                            <span>5.0g</span>
+                        </div>
+                        <div class="roi-item">
+                            <span>Projected Revenue:</span>
+                            <span>₹10,000</span>
+                        </div>
+                        <div class="roi-item">
+                            <span>Net Profit:</span>
+                            <span>₹8,200</span>
+                        </div>
+                        <div class="roi-highlight">
+                            <span>ROI:</span>
+                            <span class="roi-percentage">84.5%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="logs" class="section">
+            <h2><i class="fas fa-list-alt"></i> System Logs</h2>
+            <div class="logs-container">
+                <div class="logs-header">
+                    <span>Recent Activity</span>
+                    <button class="btn btn--sm btn--secondary" onclick="refreshLogs()">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                </div>
+                <div class="logs-list" id="logs-list">
+                    </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Dashboard Access Protection - Check if user has paid
+        (function() {
+            const userEmail = localStorage.getItem('currentUserEmail') || '';
+            const isAdmin = localStorage.getItem('isAdmin') === 'true';
+            const hasPaid = localStorage.getItem('hasPaidSaffGrow') === 'true';
+            const paidForUser = localStorage.getItem(`paid_${userEmail}`) === 'true';
+
+            // Admin emails that can access without payment
+            const ADMIN_EMAILS = ['mehak0512@gmail.com', 'vanshaj0512@gmail.com'];
+            const normalizedEmail = userEmail.toLowerCase().trim();
+            const isAdminEmail = ADMIN_EMAILS.includes(normalizedEmail);
+
+            // Allow access if:
+            // 1. User is admin (by email or flag)
+            // 2. User has paid (general flag or user-specific)
+            if (!isAdminEmail && !isAdmin && !hasPaid && !paidForUser) {
+                // No payment found, redirect to payment page
+                if (userEmail) {
+                    window.location.href = `/payment?email=${encodeURIComponent(userEmail)}&name=${encodeURIComponent(localStorage.getItem('currentUserName') || 'User')}`;
+                } else {
+                    // No user email, redirect to sign in
+                    window.location.href = '/signin';
+                }
+            }
+        })();
+    </script>
+    <script src="app.js"></script>
+</body>
+</html>
