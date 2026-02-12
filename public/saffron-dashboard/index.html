@@ -19,18 +19,33 @@
                 return;
             }
 
+            // Check localStorage FIRST because serverless backend forgets payment status on restart
+            const localPaid = localStorage.getItem(`paid_${email}`) === 'true' || localStorage.getItem("hasPaidSaffGrow") === 'true';
+            const isAdmin = localStorage.getItem('isAdmin') === 'true';
+
+            // If we have local confirmation, we can skip the strict redirect
+            if (localPaid || isAdmin) {
+                console.log("Access granted via local credentials.");
+                return;
+            }
+
             try {
-                // 2. Double Check with Backend (Port 5000)
+                // 2. Double Check with Backend (only if local check failed or as backup)
                 const res = await fetch(`/api/check-status?email=${email}`);
                 const data = await res.json();
 
                 // 3. If not Paid, kick them back to Payment Page
                 if (data.status !== 'paid') {
-                    alert("Security Check: Payment not found. Please login again.");
+                    // Only redirect if absolutely sure they haven't paid
+                    console.warn("Server validation returned unpaid. Redirecting...");
                     window.location.href = `/payment?email=${email}`;
+                } else {
+                    // If server says paid, update local storage just in case
+                    localStorage.setItem(`paid_${email}`, 'true');
+                    localStorage.setItem("hasPaidSaffGrow", 'true');
                 }
             } catch (e) {
-                console.warn("Backend offline, unable to verify server-side. Proceeding with caution.");
+                console.warn("Backend offline or unreachable. verification skipped.");
             }
         })();
     </script>
