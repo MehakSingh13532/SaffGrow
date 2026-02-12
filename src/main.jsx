@@ -7,10 +7,10 @@ import { ClerkProvider } from '@clerk/clerk-react'
 import 'bootstrap/dist/css/bootstrap.min.css'
 
 // Replace with your actual key from .env.local
-const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
+const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY || "pk_test_Y2l2aWwtY3JhYi05OS5jbGVyay5hY2NvdW50cy5kZXYk";
 
 if (!PUBLISHABLE_KEY) {
-  throw new Error("Missing Publishable Key")
+  console.error("Missing Clerk Publishable Key");
 }
 
 ReactDOM.createRoot(document.getElementById('root')).render(
